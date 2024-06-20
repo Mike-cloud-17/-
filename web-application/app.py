@@ -160,10 +160,6 @@ def get_youtube_link(track_name):
 def get_spotify_link(track_id):
     return f'<iframe src="https://open.spotify.com/embed/track/{track_id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'
 
-
-def get_spotify_link(track_id):
-    return f'<iframe src="https://open.spotify.com/embed/track/{track_id}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>'
-
 @app.route('/next', methods=['POST'])
 def next_track():
     genre = request.form['genre']
