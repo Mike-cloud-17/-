@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Genre Predictor</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #f4f4f9; 
+            font-family: 'Montserrat', sans-serif; /* Стильный шрифт Montserrat */
+            color: #333;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 20px auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+        .title, .media-title { 
+            font-size: 22px; 
+            color: #2C3E50; /* Темно-синий цвет */
+            text-align: center;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        .detail-label { 
+            font-weight: bold; 
+            color: #007bff; 
+            display: block;
+            margin-bottom: 5px;
+        }
+        .detail-content {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .video-wrapper {
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        iframe { 
+            width: 100%; 
+            height: 315px; 
+            margin-bottom: 10px;
+        }
+        .btn-custom { 
+            background-color: #007bff; 
+            color: #ffffff; 
+            border-radius: 20px; 
+            border: none; 
+            padding: 10px 20px; 
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Music Genre Predictor</h1>
+        <form action="/" method="post">
+            <div class="form-group">
+                <label for="track_name">Enter Track Name or Spotify URL:</label>
+                <input type="text" class="form-control" id="track_name" name="track_name" required>
+                <button type="submit" class="btn btn-custom mt-3">Submit</button>
+            </div>
+        </form>        
+        {% if track_name %}
+            <div class="result">
+                <h2 class="title">Recommended Track Details</h2>
+                <div class="detail-content">
+                    <span class="detail-label">Artist:</span>
+                    <span id="artist-name">{{ artists }}</span>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Track Name:</span>
+                    <span id="track-name">{{ track_name }}</span>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Predicted Genre:</span>
+                    <span id="genre-name">{{ genre }}</span>
+                </div>
+                <div class="video-wrapper">
+                    <div class="media-title">Audio Recording</div>
+                    {{ spotify_link | safe }}
+                    <div class="media-title">Video Recording</div>
+                    {{ youtube_link | safe }}
+                </div>
+                <button onclick="getNextTrack();" class="btn btn-custom">Next Track</button>
+            </div>
+        {% endif %}
+    </div>    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function getNextTrack() {
+            var genre = '{{ genre }}';
+            var trackId = '{{ track_id }}';
+            $.post('/next', { genre: genre, track_id: trackId }, function(data) {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    $('.video-wrapper').html('<div class="media-title">Audio Recording</div>' + data.spotify_link + '<div class="media-title">Video Recording</div>' + data.youtube_link);
+                    $('#artist-name').text(data.artists);
+                    $('#track-name').text(data.track_name);
+                    $('#genre-name').text(data.genre);
+                }
+            });
+        }
+    </script>    
+</body>
+</html>
